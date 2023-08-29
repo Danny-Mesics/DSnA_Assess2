@@ -9,7 +9,7 @@ class List {
 protected:
 	struct Node {
 	public:
-		Node(int data) : data{ data }, next{ nullptr } {}
+		Node(int data) : data{ data }, next{ nullptr }, previous{ nullptr } {}
 		~Node() {
 			if (next != nullptr) {
 				delete next;
@@ -17,6 +17,7 @@ protected:
 		}
 		int data;
 		Node* next;
+		Node* previous;
 
 	};
 
@@ -42,10 +43,21 @@ public:
 			return tmp;
 		}
 
-		bool operator!= (const Iterator& rhs) {
+		Iterator& operator--() { // Prefix --i so decreases then we use
+			value = value->previous;
+			return *this;
+		}
+
+		Iterator& operator--(int) { // Postfix i-- where we use it then it decreases
+			Iterator tmp = *this;
+			value = value->previous;
+			return tmp;
+		} 
+
+		bool operator!=(const Iterator& rhs) {
 			return value != rhs.value;
 		}
-		bool operator== (const Iterator& rhs) {
+		bool operator==(const Iterator& rhs) {
 			return value == rhs.value;
 		}
 
@@ -58,11 +70,11 @@ public:
 			return value;
 		}
 
-		void InsertAfter(int data) {
+		/*void InsertAfter(int data) {
 			Node* newNode = new Node(data);
 			newNode->next = value->next;
 			value->next = newNode;
-		}
+		}*/
 
 		Node* GetValue() {
 			return value;
@@ -78,8 +90,11 @@ public:
 		if (IsEmpty()) {
 			Clear();
 		}
-
 	}
+
+	//Common Methods
+
+	//Adding Methods
 
 	void PushFront(int data) {
 		Node* newNode = new Node(data);
@@ -89,17 +104,97 @@ public:
 			return;
 		}
 		else {
+			head->previous = newNode;
 			newNode->next = head;
 			head = newNode;
 		}
 		size++;
 	}
 
-	/*void Insert(Iterator prev, int value) {
+	void PushBack(int data) {
+		Node* newNode = new Node(data);
+		if (head == nullptr) {
+			head = newNode;
+			tail = newNode;
+			return;
+		}
+		else {
+			tail->next = newNode;
+			newNode->previous = tail;
+			newNode = tail;
+		}
+	}
+
+	void Insert(Iterator currentNode, int value) {
 		Node* newNode = new Node(value);
-		newNode->next = prev->next;
-		prev->next = newNode;
-	}*/
+		newNode->next = currentNode->;
+
+		if (currentNode != nullptr) {
+			newNode->previous = currentNode->previous;
+			if (currentNode->previous != nullptr)
+			{
+				currentNode->previous->next = newNode;
+			}
+			currentNode->previous = newNode;
+		}
+
+		if (currentNode == head) {
+			head = newNode;
+		}
+
+		if (tail == nullptr) {
+			tail = newNode;
+		}
+		
+		
+	}
+
+	//Remove Methods
+
+	void PopFront() {
+		if (IsEmpty()) {
+			return;
+		}
+		if (head != nullptr) {
+			Node* temp = head;
+
+			if (head->next != nullptr) {
+				head->next->previous = nullptr;
+			}
+
+			head = head->next;
+
+			delete temp;
+
+			size--;
+		}
+	}
+
+	void PopBack() {
+		if (IsEmpty()) {
+			return;
+		}
+		if (head != nullptr) {
+			Node* temp = head;
+
+			if (head->next != nullptr) {
+				head->next->previous = nullptr;
+			}
+
+			head = head->next;
+
+			delete temp;
+
+			size--;
+		}
+	}
+
+
+
+
+
+
+
 
 	bool IsEmpty() {
 		return head == nullptr;
@@ -175,6 +270,10 @@ public:
 	}
 	Iterator End() {
 		return Iterator(tail->next);
+	}
+
+	int GetSize() {
+		return size;
 	}
 
 	void Clear() {

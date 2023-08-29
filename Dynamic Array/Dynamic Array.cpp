@@ -37,6 +37,8 @@ int main()
         integers.PushFront(i);
     }
 
+    
+
     for (auto i = integers.Begin(); i != integers.End(); i++) {
         std::cout << *i << std::endl;
     }
