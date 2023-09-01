@@ -1,10 +1,5 @@
 #pragma once
 
-// For Double LinkedList
-	// Add Node* prev
-	// Add -- operators
-	// and other such relevent things
-
 class List {
 protected:
 	struct Node {
@@ -23,7 +18,7 @@ protected:
 
 	Node* head;
 	Node* tail;
-	int size;
+	int numberOfNodes;
 
 public:
 	struct Iterator {
@@ -92,9 +87,7 @@ public:
 		}
 	}
 
-	//Common Methods
-
-	//Adding Methods
+#pragma region Adding Methods
 
 	void PushFront(int data) {
 		Node* newNode = new Node(data);
@@ -108,7 +101,7 @@ public:
 			newNode->next = head;
 			head = newNode;
 		}
-		size++;
+		numberOfNodes++;
 	}
 
 	void PushBack(int data) {
@@ -125,7 +118,7 @@ public:
 		}
 	}
 
-	void Insert(Iterator currentNode, int value) {
+	/*void Insert(Iterator currentNode, int value) {
 		Node* newNode = new Node(value);
 		newNode->next = currentNode->;
 
@@ -145,12 +138,12 @@ public:
 		if (tail == nullptr) {
 			tail = newNode;
 		}
-		
-		
-	}
+	}*/
+#pragma endregion
 
-	//Remove Methods
+#pragma region Removal Methods
 
+	//Remove the first element
 	void PopFront() {
 		if (IsEmpty()) {
 			return;
@@ -166,10 +159,11 @@ public:
 
 			delete temp;
 
-			size--;
+			numberOfNodes--;
 		}
 	}
 
+	//Remove the last element
 	void PopBack() {
 		if (IsEmpty()) {
 			return;
@@ -185,32 +179,10 @@ public:
 
 			delete temp;
 
-			size--;
+			numberOfNodes--;
 		}
 	}
 
-
-
-
-
-
-
-
-	bool IsEmpty() {
-		return head == nullptr;
-	}
-
-	//Returns head by value
-	int First() {
-		if (head != nullptr)
-			return head->data;
-	}
-
-	//Returns tail by value
-	int Last() {
-		if (tail != nullptr)
-			return tail->data;
-	}
 
 	void Remove(int value) {
 		Iterator previous(nullptr);
@@ -229,14 +201,14 @@ public:
 
 
 					delete temp;
-					size--;
+					numberOfNodes--;
 					continue;
 				}
 				else if (i.GetValue() == tail) {
 					previous->next = tail->next;
 					delete tail;
 					tail = previous.GetValue();
-					size--;
+					numberOfNodes--;
 					return;
 				}
 				else {
@@ -248,7 +220,7 @@ public:
 					temp->next = nullptr;
 
 					delete temp;
-					size--;
+					numberOfNodes--;
 					continue;
 				}
 
@@ -264,21 +236,46 @@ public:
 
 		}
 	}
+#pragma endregion
 
+#pragma region Return Values
+
+	//Returns head by value
+	int First() {
+		if (head != nullptr)
+			return head->data;
+	}
+
+	//Returns tail by value
+	int Last() {
+		if (tail != nullptr)
+			return tail->data;
+	}
+
+	//Returns an Iterator to first position
 	Iterator Begin() {
 		return Iterator(head);
 	}
+
+	//Returns an Iterator to last position
 	Iterator End() {
 		return Iterator(tail->next);
 	}
 
-	int GetSize() {
-		return size;
+	int Count() {
+		return numberOfNodes;
 	}
+
+	bool IsEmpty() {
+		return head == nullptr;
+	}
+
+#pragma endregion
+
 
 	void Clear() {
 		delete head;
-		size = 0;
+		numberOfNodes = 0;
 		head = nullptr;
 		tail = nullptr;
 	}
