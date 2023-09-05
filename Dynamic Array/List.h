@@ -13,7 +13,6 @@ protected:
 		int data;
 		Node* next;
 		Node* previous;
-
 	};
 
 	Node* head;
@@ -94,7 +93,6 @@ public:
 		if (head == nullptr) {
 			head = newNode;
 			tail = newNode;
-			return;
 		}
 		else {
 			head->previous = newNode;
@@ -109,36 +107,28 @@ public:
 		if (head == nullptr) {
 			head = newNode;
 			tail = newNode;
-			return;
 		}
 		else {
 			tail->next = newNode;
 			newNode->previous = tail;
-			newNode = tail;
-		}
-	}
-
-	/*void Insert(Iterator currentNode, int value) {
-		Node* newNode = new Node(value);
-		newNode->next = currentNode->;
-
-		if (currentNode != nullptr) {
-			newNode->previous = currentNode->previous;
-			if (currentNode->previous != nullptr)
-			{
-				currentNode->previous->next = newNode;
-			}
-			currentNode->previous = newNode;
-		}
-
-		if (currentNode == head) {
-			head = newNode;
-		}
-
-		if (tail == nullptr) {
 			tail = newNode;
 		}
-	}*/
+		numberOfNodes++;
+	}
+
+	// Insert a new node after the current node
+	void Insert(Iterator currentNode, int value) {
+		Node* newNode = new Node(value);
+		
+		newNode->next = currentNode->next;
+		currentNode->next = newNode;			
+		newNode->previous = currentNode.GetValue();
+
+		if (currentNode == tail) {
+			tail = newNode;
+		}
+		numberOfNodes++;
+	}
 #pragma endregion
 
 #pragma region Removal Methods
@@ -168,14 +158,14 @@ public:
 		if (IsEmpty()) {
 			return;
 		}
-		if (head != nullptr) {
-			Node* temp = head;
+		if (tail != nullptr) {
+			Node* temp = tail;
 
-			if (head->next != nullptr) {
-				head->next->previous = nullptr;
+			if (tail->previous != nullptr) {
+				tail->previous->next = nullptr;
 			}
 
-			head = head->next;
+			tail = tail->previous;
 
 			delete temp;
 
@@ -252,12 +242,12 @@ public:
 			return tail->data;
 	}
 
-	//Returns an Iterator to first position
+	//Returns an Iterator to first position of list
 	Iterator Begin() {
 		return Iterator(head);
 	}
 
-	//Returns an Iterator to last position
+	//Returns an Iterator to last position of list
 	Iterator End() {
 		return Iterator(tail->next);
 	}
