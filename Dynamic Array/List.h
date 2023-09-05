@@ -4,6 +4,7 @@ class List {
 protected:
 	struct Node {
 	public:
+		Node() {}
 		Node(int data) : data{ data }, next{ nullptr }, previous{ nullptr } {}
 		~Node() {
 			if (next != nullptr) {
@@ -46,7 +47,7 @@ public:
 			Iterator tmp = *this;
 			value = value->previous;
 			return tmp;
-		} 
+		}
 
 		bool operator!=(const Iterator& rhs) {
 			return value != rhs.value;
@@ -64,12 +65,6 @@ public:
 			return value;
 		}
 
-		/*void InsertAfter(int data) {
-			Node* newNode = new Node(data);
-			newNode->next = value->next;
-			value->next = newNode;
-		}*/
-
 		Node* GetValue() {
 			return value;
 		}
@@ -81,7 +76,7 @@ public:
 	}
 
 	~List() {
-		if (IsEmpty()) {
+		if (!IsEmpty()) {
 			Clear();
 		}
 	}
@@ -90,7 +85,7 @@ public:
 
 	void PushFront(int data) {
 		Node* newNode = new Node(data);
-		if (head == nullptr) {
+		if (IsEmpty()) {
 			head = newNode;
 			tail = newNode;
 		}
@@ -104,7 +99,7 @@ public:
 
 	void PushBack(int data) {
 		Node* newNode = new Node(data);
-		if (head == nullptr) {
+		if (IsEmpty()) {
 			head = newNode;
 			tail = newNode;
 		}
@@ -119,9 +114,9 @@ public:
 	// Insert a new node after the current node
 	void Insert(Iterator currentNode, int value) {
 		Node* newNode = new Node(value);
-		
+
 		newNode->next = currentNode->next;
-		currentNode->next = newNode;			
+		currentNode->next = newNode;
 		newNode->previous = currentNode.GetValue();
 
 		if (currentNode == tail) {
@@ -133,97 +128,94 @@ public:
 
 #pragma region Removal Methods
 
-	//Remove the first element
+	// It is necessary to set nullptr on the linking pointers
+	// before calling delete as the way node destructors are set up
+	// causes a chain reaction of deleting through the list
+
+
+	//Remove the first element of the list
 	void PopFront() {
 		if (IsEmpty()) {
 			return;
 		}
-		if (head != nullptr) {
-			Node* temp = head;
 
-			if (head->next != nullptr) {
-				head->next->previous = nullptr;
-			}
+		Node* temp = head;
 
-			head = head->next;
-
-			delete temp;
-
-			numberOfNodes--;
+		// 
+		if (head->next != nullptr) {
+			head->next->previous = nullptr;
 		}
+
+		head = head->next;
+		temp->next = nullptr;
+
+		delete temp;
+		temp = nullptr;
+
+		numberOfNodes--;
 	}
 
-	//Remove the last element
+	//Remove the last element of the list
 	void PopBack() {
 		if (IsEmpty()) {
 			return;
 		}
-		if (tail != nullptr) {
-			Node* temp = tail;
 
-			if (tail->previous != nullptr) {
-				tail->previous->next = nullptr;
-			}
+		Node* temp = tail;
 
-			tail = tail->previous;
-
-			delete temp;
-
-			numberOfNodes--;
+		if (tail->previous != nullptr) {
+			tail->previous->next = nullptr;
 		}
+
+		tail = tail->previous;
+		temp->previous = nullptr;
+
+		delete temp;
+		temp = nullptr;
+
+		numberOfNodes--;
 	}
 
 
 	void Remove(int value) {
-		Iterator previous(nullptr);
-		for (auto i = Begin(); i != End();) {
+		// The iterator will be set to the previous node of i
+		Iterator iterator(nullptr);
 
+		for (auto i = Begin(); i != End();) {
 			if (*i == value) {
-				// If we are the head
+				// If i is the head
 				if (i.GetValue() == head) {
 					head = i->next;
 					Node* temp = i.GetValue();
-
-
 					++i;
-
 					i->next = nullptr;
-
-
 					delete temp;
 					numberOfNodes--;
 					continue;
 				}
+				// If i is the tail
 				else if (i.GetValue() == tail) {
-					previous->next = tail->next;
+					iterator->next = tail->next;
 					delete tail;
-					tail = previous.GetValue();
+					tail = iterator.GetValue();
 					numberOfNodes--;
 					return;
 				}
+				// if i is at an arbitary location in the list
 				else {
-					previous->next = i->next;
-
-
+					iterator->next = i->next;
+					i->next->previous = iterator.GetValue();
 					Node* temp = i.GetValue();
 					++i;
 					temp->next = nullptr;
-
 					delete temp;
 					numberOfNodes--;
 					continue;
 				}
-
-
-
-				// We set prev i to i->next
-				//set our next to nullptr
-				//delete ourself
 			}
 
-			previous = i;
+			iterator = i;
 			i++;
-
 		}
 	}
 #pragma endregion

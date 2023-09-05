@@ -15,15 +15,17 @@ int main()
     integers.PushBack(34);
     integers.PushBack(44);
     integers.Remove(34);
+    //integers.PopFront();
+    //integers.PopBack();
 
     std::cout << integers.Count() << std::endl;
     
 
     for (auto i = integers.Begin(); i != integers.End(); i++) {
         std::cout << *i << std::endl;
-        if (*i == 14) {
+        /*if (*i == 14) {
             integers.Insert(i, 50);
-        }
+        }*/
     }
 
     integers.Clear();
