@@ -1,5 +1,4 @@
 #include "raylib.h"
-#include "glm/glm/glm.hpp"
 
 #define RAYGUI_IMPLEMENTATION
 #define RAYGUI_SUPPORT_ICONS
@@ -19,6 +18,11 @@ int main(int argc, char* argv[])
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
 
+    List integers;
+
+    int valueBoxValue = 0;
+    bool valueBoxEditMode = false;
+
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
@@ -33,7 +37,32 @@ int main(int argc, char* argv[])
 
         ClearBackground(BLACK);
 
-        DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
+        GuiSetStyle(TEXTBOX, TEXT_ALIGNMENT, GUI_TEXT_ALIGN_CENTER);
+
+        if (GuiValueBox(Rectangle{ 25, 25, 125, 30 }, NULL, &valueBoxValue, 0, 100, valueBoxEditMode)) valueBoxEditMode = !valueBoxEditMode;
+
+        if (GuiButton(Rectangle{ 160, 25, 125, 30 }, GuiIconText(RICON_OK_TICK, "Insert")))
+        {
+            // Implemented code to insert valueBoxValue into binary tree
+            /*integers.Insert(valueBoxValue);
+            m_selectedNode = m_binaryTree.Find(valueBoxValue);*/
+        }
+
+        if (GuiButton(Rectangle{ 160, 60, 125, 30 }, GuiIconText(RICON_CROSS, "Remove")))
+        {
+            // Implement the code to remove the node with value = valueBoxValue from your binary tree here! 
+
+            /*integers.Remove(valueBoxValue);
+            delete m_selectedNode;
+            m_selectedNode = nullptr;*/
+        }
+
+        if (GuiButton(Rectangle{ 160, 95, 125, 30 }, GuiIconText(RICON_LENS, "Find")))
+        {
+            // Implement the code to find the node with value = valueBoxValue from your binary tree here! 
+            /*m_selectedNode = integers.Find(valueBoxValue);*/
+
+        }
 
         EndDrawing();
         //----------------------------------------------------------------------------------
